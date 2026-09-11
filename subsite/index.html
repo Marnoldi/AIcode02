@@ -29,7 +29,6 @@
             align-items: center;
             justify-content: center;
         }
-        /* 색상이 부드럽게 변하도록 transition 강도를 미세하게 조절 */
         #fly-image {
             width: 200px; 
             transition: width 0.1s ease, filter 0.2s ease;
@@ -40,6 +39,7 @@
             margin-top: 20px;
             min-height: 60px;
             line-height: 1.5;
+            white-space: pre-line; /* 줄바꿈(\n)이 정상 적용되도록 설정 */
         }
     </style>
 </head>
@@ -50,9 +50,9 @@
 
     <label for="fly-select">파리 선택:</label>
     <select id="fly-select" onchange="updateFly()">
-        <option value="frutfly.png" data-scale="1.0">초파리 (기본 1.0)</option>
-        <option value="벼룩팔이.png" data-scale="0.8">벼룩파리 (기본 0.8)</option>
-        <option value="arnoldimale.png" data-scale="0.2">Megapropodiphora arnoldi (기본 0.2)</option>
+        <option value="frutfly.png" data-scale="1.0">초파리</option>
+        <option value="벼룩팔이.png" data-scale="0.8">벼룩파리</option>
+        <option value="arnoldimale.png" data-scale="0.2">Megapropodiphora arnoldi</option>
     </select>
 
     <br>
@@ -83,7 +83,9 @@
         
         const selectedOption = select.options[select.selectedIndex];
         const scale = parseFloat(selectedOption.getAttribute('data-scale')) || 1.0;
-        const currentFlyName = selectedOption.text.split(' '); 
+        
+        // 텍스트 기반 비교 오류를 방지하기 위해 value(이미지 파일명)로 확실하게 판정합니다.
+        const currentFlyValue = selectedOption.value; 
         
         const finalSize = parseInt(sliderValue) * scale;
         img.style.width = finalSize + 'px';
@@ -91,52 +93,50 @@
         let minThreshold, maxThreshold;
         let messages = { giant: "", tiny: "", normal: "" };
 
-        if (currentFlyName === "초파리") {
+        if (currentFlyValue === "frutfly.png") {
             minThreshold = 100;
             maxThreshold = 350;
             messages.giant = `⚠️ 초파리 거대화 상태 (${Math.round(finalSize)}px):\n거대해진 신체 유지 조절을 위해 대사량을 낮추고 저전력 동면 모드에 진입합니다.`;
             messages.tiny = `🔍 초파리 축소화 상태 (${Math.round(finalSize)}px):\n과도한 분자 압축으로 시각 기관이 퇴화하고 생명 신호가 미약해집니다.`;
-            messages.normal = `🌱 초파리 일반 상태입니다. (${Math.round(finalSize)}px)\n뇌지도 없는 단순한 여기선 슬기롭게 표준적인 대사 활동 비행 능력을 유지하고 있습니다.`;
-        } else if (currentFlyName === "벼룩파리") {
+            messages.normal = `🌱 초파리 일반 상태입니다. (${Math.round(finalSize)}px)\n뇌지도 없는 단순한 여기선 슬기롭게 표준적인 대사 활동과 비행 능력을 유지하고 있습니다.`;
+        } else if (currentFlyValue === "벼룩팔이.png") {
             minThreshold = 80;
             maxThreshold = 280;
             messages.giant = `⚠️ 벼룩파리 거대화 상태 (${Math.round(finalSize)}px):\n급격한 도약 에너지 소비를 억제하기 위해 신경계를 정지하고 동면 상태를 개시합니다.`;
             messages.tiny = `🔍 벼룩파리 축소화 상태 (${Math.round(finalSize)}px):\n질량이 원자 수준에 도달하여 중력의 영향에서 벗어나 공기 중에 부유합니다.`;
             messages.normal = `🌱 벼룩파리 일반 상태입니다. (${Math.round(finalSize)}px)\n평화롭게 특유의 불규칙하고 빠른 주행 패턴이 정상 작동 중입니다.`;
-        } else if (currentFlyName === "megapropodiphora arnoldi") {
+        } else { 
+            // Megapropodiphora arnoldi 기준
             minThreshold = 15;
             maxThreshold = 80;
-            messages.giant = `⚠️ M. arnoldi 거대화 상태 (${Math.round(finalSize)}px):\n숙주보다 거대해지고 미세 뇌 용량의 한계 돌파로 과부하를 방지하고자 전신 시스템을 다운(저전력 동면)합니다.`;
+            messages.giant = `⚠️ M. arnoldi 거대화 상태 (${Math.round(finalSize)}px):\n숙주보다 커지고 미세 뇌 용량의 한계 돌파로 과부하를 방지하고자 전신 시스템을 다운(저전력 동면)합니다.`;
             messages.tiny = `🔍 M. arnoldi 축소화 상태 (${Math.round(finalSize)}px):\n기생 대상인 개미의 세포보다 작아져 완벽한 아원자 은폐 모드로 전환됩니다.`;
             messages.normal = `🌱 M. arnoldi 일반 상태입니다. (${Math.round(finalSize)}px)\n평화롭게 세계 최소형 파리 수준의 고유 밸런스를 안전하게 유지하고 있습니다.`;
         }
 
-        // --- 💡 실시간 진하기 제어 로직 추가 ---
+        // --- 실시간 진하기 제어 및 출력부 ---
         if (finalSize > maxThreshold) {
-            status.innerText = messages.giant;
+            status.textContent = messages.giant;
             status.style.color = "#ff4d4d"; 
             
-            // 극단적으로 커질수록 붉은 톤이 진해짐 (최대 1.8)
-            let intensity = Math.min(1.8, (finalSize / maxThreshold));
-            
-            // 단색화(sepia) 후 붉은색(hue 0도) 계열로 고정하여 튀는 색상 원천 차단
-            img.style.filter = `sepia(0.6) hue-rotate(340deg) saturate(${intensity * 3}) brightness(0.9) drop-shadow(0 0 10px rgba(255, 77, 77, 0.5))`;
+            // 멀어질수록 최대 2배까지 서서히 진해짐
+            let intensity = Math.min(2.0, (finalSize / maxThreshold));
+            img.style.filter = `sepia(0.4) hue-rotate(330deg) saturate(${intensity * 2.5}) brightness(0.95) drop-shadow(0 0 12px rgba(255, 77, 77, 0.5))`;
             
         } else if (finalSize < minThreshold) {
-            status.innerText = messages.tiny;
+            status.textContent = messages.tiny;
             status.style.color = "#4da6ff"; 
             
-            // 극단적으로 작아질수록 푸른 남색 톤이 진해짐 (최소값 방어)
             let currentMin = finalSize < 1 ? 1 : finalSize;
-            let intensity = Math.min(2.0, (minThreshold / currentMin));
+            let intensity = Math.min(2.5, (minThreshold / currentMin));
             
-            // 💡 중요: 민트/분홍색으로 튀지 않도록 완전히 차가운 푸른색 계열(hue 200도)로 베이스를 고정
-            img.style.filter = `sepia(0.5) hue-rotate(190deg) saturate(${intensity * 2.5}) brightness(0.8) drop-shadow(0 0 10px rgba(77, 166, 255, 0.4))`;
+            // M. arnoldi를 포함해 튀는 색(민트, 핑크) 없이 은은한 푸른 톤 고정
+            img.style.filter = `sepia(0.4) hue-rotate(195deg) saturate(${intensity * 2.2}) brightness(0.85) drop-shadow(0 0 12px rgba(77, 166, 255, 0.4))`;
             
         } else {
-            status.innerText = messages.normal;
+            status.textContent = messages.normal;
             status.style.color = "white"; 
-            img.style.filter = "none"; // 일반 상태는 본래 이미지 색상
+            img.style.filter = "none"; 
         }
     }
 
