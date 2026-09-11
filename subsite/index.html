@@ -25,7 +25,7 @@
         }
         .image-box {
             margin: 30px auto;
-            min-height: 350px;
+            min-height: 550px; /* 큰 크기 대응을 위해 세로 영역 확보 */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -48,12 +48,12 @@
 <div class="container">
     <h1>🪰 파리 크기 조절 시뮬레이터</h1>
 
-    <!-- 1. 파리 선택 메뉴 (중간 변경 가능) -->
+    <!-- 1. 파리 선택 메뉴 (data-scale 속성으로 고유 비율 지정) -->
     <label for="fly-select">파리 선택:</label>
     <select id="fly-select" onchange="updateFly()">
-        <option value="frutfly.png">초파리</option>
-        <option value="벼룩팔이.png">벼룩파리</option>
-        <option value="arnoldimale.png">Megapropodiphora arnoldi</option>
+        <option value="frutfly.png" data-scale="1.0">초파리 (기본 1.0)</option>
+        <option value="벼룩팔이.png" data-scale="0.8">벼룩파리 (기본 0.8)</option>
+        <option value="arnoldimale.png" data-scale="0.2">Megapropodiphora arnoldi (기본 0.2)</option>
     </select>
 
     <br>
@@ -64,7 +64,7 @@
 
     <!-- 3. 이미지 출력 영역 -->
     <div class="image-box">
-        <img id="fly-image" src="초파리.png" alt="파리 이미지">
+        <img id="fly-image" src="frutfly.png" alt="파리 이미지">
     </div>
 
     <!-- 4. 상태 메시지 출력 영역 -->
@@ -76,30 +76,46 @@
     function updateFly() {
         const select = document.getElementById('fly-select');
         const img = document.getElementById('fly-image');
-        img.src = select.value; // 선택한 이미지 파일로 교체
+        const slider = document.getElementById('size-slider');
+        
+        // 1. 이미지 소스 변경
+        img.src = select.value; 
+        
+        // 2. 파리가 바뀌어도 현재 슬라이더 값에 맞춰 크기 비율 재계산
+        changeSize(slider.value);
     }
 
-    // 슬라이더를 움직여 크기가 변할 때 호출되는 함수
-    function changeSize(size) {
+    // 슬라이더를 움직이거나 파리가 바뀔 때 크기를 계산하는 함수
+    function changeSize(sliderValue) {
+        const select = document.getElementById('fly-select');
         const img = document.getElementById('fly-image');
         const status = document.getElementById('status-message');
         
-        // 이미지 크기(width) 변경 (px 단위)
-        img.style.width = size + 'px';
+        // 현재 선택된 파리의 고유 배율 가져오기 (기본값 1.0)
+        const selectedOption = select.options[select.selectedIndex];
+        const scale = parseFloat(selectedOption.getAttribute('data-scale')) || 1.0;
+        
+        // 슬라이더 값에 고유 배율을 곱해 최종 크기(px) 결정
+        const finalSize = parseInt(sliderValue) * scale;
+        img.style.width = finalSize + 'px';
 
-        // 크기 값에 따른 조건별 메시지 출력
-        const sizeNum = parseInt(size);
-        if (sizeNum > 350) {
-            status.textContent = "⚠️ 거대화 상태: 에너지 소비가 극심하여 저전력 동면 모드에 진입합니다.";
+        // 상태 메시지는 '최종 크기(finalSize)'를 기준으로 판정
+        if (finalSize > 350) {
+            status.textContent = `⚠️ 거대화 상태 (${Math.round(finalSize)}px): 에너지 소비가 극심하여 저전력 동면 모드에 진입합니다🪰.`;
             status.style.color = "#ff4d4d"; // 빨간색
-        } else if (sizeNum < 100) {
-            status.textContent = "🔍 축소화 상태: 원자 수준으로 작아져 생명 신호가 미약합니다.";
+        } else if (finalSize < 100) {
+            status.textContent = `🔍 축소화 상태 (${Math.round(finalSize)}px): 원자 수준으로 작아져 생명 신호가 미약합니다🪰.`;
             status.style.color = "#4da6ff"; // 파란색
         } else {
-            status.textContent = "🌱 일반 상태입니다.";
+            status.textContent = `🌱 일반 상태입니다🪰. (${Math.round(finalSize)}px)`;
             status.style.color = "white"; // 흰색
         }
     }
+
+    // 초기 실행 시 슬라이더 값(200)에 맞게 크기 동기화
+    window.onload = function() {
+        changeSize(document.getElementById('size-slider').value);
+    };
 </script>
 
 </body>
