@@ -30,10 +30,10 @@
             align-items: center;
             justify-content: center;
         }
-        /* 기본 이미지 스타일 (너비 기준 조절) */
+        /* 기본 이미지 스타일 (너비 및 색상 필터 부드럽게 전환) */
         #fly-image {
             width: 200px; 
-            transition: width 0.1s ease;
+            transition: width 0.1s ease, filter 0.3s ease;
         }
         #status-message {
             font-size: 20px;
@@ -110,7 +110,7 @@
             maxThreshold = 350;
             messages.giant = `⚠️ 초파리 거대화 상태 (${Math.round(finalSize)}px):\n거대해진 신체 유지 조절을 위해 대사량을 낮추고 저전력 동면 모드에 진입합니다.`;
             messages.tiny = `🔍 초파리 축소화 상태 (${Math.round(finalSize)}px):\n과도한 분자 압축으로 시각 기관이 퇴화하고 생명 신호가 미약해집니다.`;
-            messages.normal = `🌱 초파리 일반 상태입니다. (${Math.round(finalSize)}px)\n평화롭게 표준적인 대사 활동과 비행 능력을 유지하고 있습니다.`;
+            messages.normal = `🌱 초파리 일반 상태입니다. (${Math.round(finalSize)}px)\n뇌지도 없는 단순한 이곳에선 슬기롭게 표준적인 대사 활동과 비행 능력을 유지하고 있습니다.`;
             
         } else if (currentFlyName === "벼룩파리") {
             minThreshold = 80;
@@ -123,21 +123,32 @@
             // Megapropodiphora arnoldi 기준
             minThreshold = 15;
             maxThreshold = 80;
-            messages.giant = `⚠️ M. arnoldi 거대화 상태 (${Math.round(finalSize)}px):\n숙주보다 커지는 미세 뇌 용량의 한계 돌파로 과부하를 방지하고자 전신 시스템을 시스템 다운(저전력 동면)합니다.`;
+            messages.giant = `⚠️ M. arnoldi 거대화 상태 (${Math.round(finalSize)}px):\n숙주보다 거대한 미세 뇌 용량의 한계 돌파로 과부하를 방지하고자 전신 시스템을 다운(저전력 동면)합니다.`;
             messages.tiny = `🔍 M. arnoldi 축소화 상태 (${Math.round(finalSize)}px):\n기생 대상인 개미의 세포보다 작아져 완벽한 아원자 은폐 모드로 전환됩니다.`;
-            messages.normal = `🌱 M. arnoldi 일반 상태입니다. (${Math.round(finalSize)}px)\n평화롭게 0.395mm에 달하는 세계 최소형 파리 수준의 고유 밸런스를 안전하게 유지하고 있습니다.`;
+            messages.normal = `🌱 M. arnoldi 일반 상태입니다. (${Math.round(finalSize)}px)\n평화롭게 세계 최소형 파리 수준의 고유 밸런스를 안전하게 유지하고 있습니다.`;
         }
 
-        // --- 상태 메시지 판정 및 출력 ---
+        // --- 상태 메시지 판정 및 실시간 색상 톤(필터) 변경 ---
         if (finalSize > maxThreshold) {
             status.innerText = messages.giant;
-            status.style.color = "#ff4d4d"; // 빨간색
+            status.style.color = "#ff4d4d"; // 빨간색 텍스트
+            
+            // 💡 거대화: 이미지를 붉은 톤으로 변경 (색조 회전 + 채도 상승)
+            img.style.filter = "hue-rotate(0deg) saturate(3) sepia(0.5) drop-shadow(0 0 10px rgba(255, 77, 77, 0.6))";
+            
         } else if (finalSize < minThreshold) {
             status.innerText = messages.tiny;
-            status.style.color = "#222272"; // 어두운 파란색 (요청하신 색상 코드 유지)
+            status.style.color = "#4da6ff"; // 남색/파란색 텍스트
+            
+            // 💡 축소화: 이미지를 남색 톤으로 변경 (색조를 파란색 영역으로 회전)
+            img.style.filter = "hue-rotate(220deg) saturate(2) brightness(0.8) drop-shadow(0 0 10px rgba(77, 166, 255, 0.6))";
+            
         } else {
             status.innerText = messages.normal;
-            status.style.color = "white"; // 흰색
+            status.style.color = "white"; // 흰색 텍스트
+            
+            // 💡 일반 상태: 필터 제거 (원래 이미지 색상)
+            img.style.filter = "none";
         }
     }
 
