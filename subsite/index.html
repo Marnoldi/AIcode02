@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파리 크기 조절기</title>
+    <style>
+        /* 검은색 배경 및 UI 스타일 정의 */
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        select, input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .image-box {
+            margin: 30px auto;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 기본 이미지 스타일 (너비 기준 조절) */
+        #fly-image {
+            width: 200px; 
+            transition: width 0.1s ease;
+        }
+        #status-message {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🪰 파리 크기 조절 시뮬레이터</h1>
+
+    <!-- 1. 파리 선택 메뉴 (중간 변경 가능) -->
+    <label for="fly-select">파리 선택:</label>
+    <select id="fly-select" onchange="updateFly()">
+        <option value="초파리.png">초파리</option>
+        <option value="벼룩파리.png">벼룩파리</option>
+        <option value="메가파리.png">Megapropodiphora arnoldi</option>
+    </select>
+
+    <br>
+
+    <!-- 2. 크기 조절 슬라이더 -->
+    <label for="size-slider">크기 조절:</label>
+    <input type="range" id="size-slider" min="50" max="500" value="200" oninput="changeSize(this.value)">
+
+    <!-- 3. 이미지 출력 영역 -->
+    <div class="image-box">
+        <img id="fly-image" src="초파리.png" alt="파리 이미지">
+    </div>
+
+    <!-- 4. 상태 메시지 출력 영역 -->
+    <div id="status-message">일반 상태입니다.</div>
+</div>
+
+<script>
+    // 파리 종류가 변경될 때 호출되는 함수
+    function updateFly() {
+        const select = document.getElementById('fly-select');
+        const img = document.getElementById('fly-image');
+        img.src = select.value; // 선택한 이미지 파일로 교체
+    }
+
+    // 슬라이더를 움직여 크기가 변할 때 호출되는 함수
+    function changeSize(size) {
+        const img = document.getElementById('fly-image');
+        const status = document.getElementById('status-message');
+        
+        // 이미지 크기(width) 변경 (px 단위)
+        img.style.width = size + 'px';
+
+        // 크기 값에 따른 조건별 메시지 출력
+        const sizeNum = parseInt(size);
+        if (sizeNum > 350) {
+            status.textContent = "⚠️ 거대화 상태: 에너지 소비가 극심하여 저전력 동면 모드에 진입합니다.";
+            status.style.color = "#ff4d4d"; // 빨간색
+        } else if (sizeNum < 100) {
+            status.textContent = "🔍 축소화 상태: 원자 수준으로 작아져 생명 신호가 미약합니다.";
+            status.style.color = "#4da6ff"; // 파란색
+        } else {
+            status.textContent = "🌱 일반 상태입니다.";
+            status.style.color = "white"; // 흰색
+        }
+    }
+</script>
+
+</body>
+</html>
