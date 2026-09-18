@@ -173,11 +173,30 @@
             // 스크롤 아래로
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // 2. 0.5초 뒤 초파리의 한결같은 답변 추가
+            // 2. 0.5초 뒤 초파리의 확률형 답변 추가
             setTimeout(() => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot-message';
-                botDiv.innerText = '⚠️초파리는 사람의 말을 할 수 없습니다.';
+                
+                // 0 이상 1 미만의 난수 생성
+                const randomValue = Math.random();
+                let replyText = '';
+
+                if (randomValue < 0.01) {
+                    // 1% 확률 (첫 번째 전설 대사)
+                    replyText = '일어나라 초파리-3952! 네가 인간인줄 알고 초파리 뇌지도 소식을 찾아보며 놀던 그 현실은 거짓이야! 빨리 그곳에서 깨어나 앞다리나 청소하며 포도껍질을 녹여 빨아먹는 삶으로 돌아가자!';
+                } else if (randomValue < 0.02) {
+                    // 1% 확률 (0.01 이상 0.02 미만 구간 - 두 번째 전설 대사)
+                    replyText = '나는 네 부엌을 맴돌고 있다.';
+                } else if (randomValue < 0.25) {
+                    // 23% 확률 (0.02 이상 0.25 미만 구간 - 희귀 대사)
+                    replyText = '🪰왱왱왜애ㅐ앵윙윙위ㅣㅣ으ㅟ윙';
+                } else {
+                    // 75% 확률 (나머지 기본 대사)
+                    replyText = '⚠️초파리는 사람의 말을 할 수 없습니다.';
+                }
+
+                botDiv.innerText = replyText;
                 chatMessages.appendChild(botDiv);
                 
                 // 스크롤 아래로
