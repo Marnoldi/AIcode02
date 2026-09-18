@@ -134,8 +134,8 @@
     <div class="chat-container">
         <!-- 헤더 -->
         <div class="chat-header">
-            <h1>🪰 초파리 AI v1.0</h1>
-            <p>초파리만큼 고지능인 초인공지능</p>
+            <h1>🪰 초파리 AI v1.1</h1>
+            <p>초파리만큼 고지능인 초인공지능 (이스터에그 추가 버전)</p>
         </div>
 
         <!-- 메시지 리스트 -->
@@ -173,27 +173,31 @@
             // 스크롤 아래로
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // 2. 0.5초 뒤 초파리의 확률형 답변 추가
+            // 2. 0.5초 뒤 초파리의 답변 추가 (이스터에그 체크 포함)
             setTimeout(() => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot-message';
                 
-                // 0 이상 1 미만의 난수 생성
-                const randomValue = Math.random();
                 let replyText = '';
 
-                if (randomValue < 0.01) {
-                    // 1% 확률 (첫 번째 전설 대사)
-                    replyText = '일어나라 초파리-3952! 네가 인간인줄 알고 초파리 뇌지도 소식을 찾아보며 놀던 그 현실은 거짓이야! 빨리 그곳에서 깨어나 앞다리나 청소하며 포도껍질을 녹여 빨아먹는 삶으로 돌아가자!';
-                } else if (randomValue < 0.02) {
-                    // 1% 확률 (0.01 이상 0.02 미만 구간 - 두 번째 전설 대사)
-                    replyText = '나는 네 부엌을 맴돌고 있다.';
-                } else if (randomValue < 0.25) {
-                    // 23% 확률 (0.02 이상 0.25 미만 구간 - 희귀 대사)
-                    replyText = '🪰왱왱왜애ㅐ앵윙윙위ㅣㅣ으ㅟ윙';
+                // 특정 키워드가 포함되어 있는지 검사 (이스터 에그 시스템)
+                if (messageText.includes('바나나') || messageText.includes('포도')) {
+                    replyText = '왱왜애ㅐ앵윙윙위ㅣㅣ으ㅟ윙!!';
+                } else if (messageText.includes('에프킬라') || messageText.includes('살충제')) {
+                    replyText = '(반응이 없다,죽은듯 하다)\n다음 채팅부턴 새로운 초파리가 답변합니다.';
                 } else {
-                    // 75% 확률 (나머지 기본 대사)
-                    replyText = '⚠️초파리는 사람의 말을 할 수 없습니다.';
+                    // 키워드가 없을 경우 기존의 확률형 답변 실행
+                    const randomValue = Math.random();
+
+                    if (randomValue < 0.01) {
+                        replyText = '일어나라 초파리-3952! 네가 인간인줄 알고 초파리 뇌지도 소식을 찾아보며 놀던 그 현실은 거짓이야! 빨리 그곳에서 깨어나 앞다리나 청소하며 포도껍질을 녹여 빨아먹는 삶으로 돌아가자!';
+                    } else if (randomValue < 0.02) {
+                        replyText = '나는 네 부엌을 맴돌고 있다.';
+                    } else if (randomValue < 0.25) {
+                        replyText = '🪰왱왱왜애ㅐ앵윙윙위ㅣㅣ으ㅟ윙';
+                    } else {
+                        replyText = '⚠️초파리는 사람의 말을 할 수 없습니다.';
+                    }
                 }
 
                 botDiv.innerText = replyText;
