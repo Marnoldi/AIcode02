@@ -104,8 +104,6 @@
     <div id="hint-ring"></div>
 
     <script>
-        const targetImageURL = "K.png";
-        
         const target = document.getElementById('target-pixel');
         const centerBox = document.getElementById('center-box');
         const hintRing = document.getElementById('hint-ring');
@@ -117,6 +115,16 @@
         let startTime = null;
         let stopWatchInterval = null;
         let finalElapsedTime = "0.0";
+
+        function createOnePixelPNG(color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 1, 1);
+            return canvas.toDataURL('image/png');
+        }
 
         function startStopWatch() {
             clearInterval(stopWatchInterval);
@@ -182,26 +190,22 @@
             resizeTimeout = setTimeout(spawnTarget, 200);
         };
 
-        target.addEventListener('click', async () => {
+        target.addEventListener('click', () => {
             clearTimeout(hintTimer);
             clearTimeout(hintHideTimer);
             clearInterval(stopWatchInterval);
 
             try {
-                const response = await fetch(targetImageURL);
-                const blob = await response.blob();
-                const downloadURL = window.URL.createObjectURL(blob);
+                const downloadURL = createOnePixelPNG('#222272');
 
-                const link = document.createElement('K');
+                const link = document.createElement('a');
                 link.href = downloadURL;
                 link.download = 'Kma.png'; 
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
-                window.URL.revokeObjectURL(downloadURL);
             } catch (error) {
-                console.error("이미지 다운로드 실패:", error);
+                console.error("다운로드 실패:", error);
                 alert("다운로드 실패");
             }
 
