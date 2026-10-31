@@ -184,12 +184,12 @@
                 if (messageText.includes('바나나') || messageText.includes('포도') || messageText.includes('짝짓기') || messageText.includes('오렌지') || messageText.includes('왱왱')){
                     replyText = '왱왜애ㅐ앵윙윙위ㅣㅣ으ㅟ윙!!';
                 } else if (messageText.includes('에프킬라') || messageText.includes('살충제')) {
-                    replyText = '(반응이 없다,죽은듯 하다)\n다음 채팅부턴 새로운 초파리가 답변합니다.';
+                    replyText = '다음 채팅부턴 새로운 초파리가 답변합니다.';
                 } else {
                     // 키워드가 없을 경우 기존의 확률형 답변 실행
                     const randomValue = Math.random();
 
-                    if (randomValue < 0.01) {
+                    if (randomValue < 0.001) {
                         replyText = '일어나라 초파리-3952! 네가 인간인줄 알고 초파리 뇌지도 소식을 찾아보며 놀던 그 현실은 거짓이야! 빨리 그곳에서 깨어나 앞다리나 청소하며 포도껍질을 녹여 빨아먹는 삶으로 돌아가자!';
                     } else if (randomValue < 0.02) {
                         replyText = '나는 네 부엌을 맴돌고 있다.';
